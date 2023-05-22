@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dapp-template: debug client",
+      "type": "chrome",
+      "request": "launch",
+      "userDataDir": false,
+      "runtimeArgs": [
+        "--profile-directory=Web3DebugProfile",
+      ],
+      "url": "http://localhost:3000/"
+    }
+  ]
+}
