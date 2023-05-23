@@ -1,8 +1,8 @@
 import {
     Box,
-    Button,
     CssBaseline,
     ThemeProvider,
+    Typography,
     createTheme,
 } from "@mui/material";
 import TopBar from "./global/TopBar";
@@ -15,6 +15,8 @@ import {
 } from "./theme";
 import MainGrid from "./components/MainGrid";
 import SectionWithHeading from "./components/sections/SectionWithHeading";
+import TokenAmountTextField from "./components/inputs/TokenAmountTextField";
+import { useState } from "react";
 
 const APP_NAME = "DAPP TEMPLATE";
 
@@ -47,6 +49,12 @@ function App() {
         })
     );
 
+    const [parsedValue, setParsedValue] = useState<string | null>(null);
+
+    function onValueChange(value: string | null) {
+        setParsedValue(value);
+    }
+
     return (
         <WagmiConfig client={client}>
             <ThemeProvider theme={theme}>
@@ -59,43 +67,23 @@ function App() {
                                 <SectionWithHeading heading="Test">
                                     <Box p={1}>
                                         <Box mb={"1rem"}>
-                                            Lorem ipsum dolor sit amet,
-                                            consectetur adipiscing elit. Nullam
-                                            eget felis eget nunc aliquet
-                                            ultricies. Donec euismod, nisl vitae
-                                            aliquam ultricies, nunc sapien
-                                            ultricies nunc, vitae aliquam nunc
-                                            nisl vitae nunc.
-                                        </Box>
-                                        <Box mb={"1rem"}>
-                                            <Button
-                                                variant="outlined"
-                                                color="primary"
-                                                sx={{ mr: "1rem" }}
-                                            >
-                                                Primary
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                            >
-                                                Primary
-                                            </Button>
+                                            This is a Section component with a
+                                            heading.
                                         </Box>
                                         <Box>
-                                            <Button
+                                            <Typography variant="h6">
+                                                Parsed Value: {parsedValue}
+                                            </Typography>
+                                            <TokenAmountTextField
                                                 variant="outlined"
-                                                color="secondary"
-                                                sx={{ mr: "1rem" }}
-                                            >
-                                                Secondary
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                            >
-                                                Secondary
-                                            </Button>
+                                                value="0.0"
+                                                tokenDecimals={18}
+                                                tokenSymbol="DAI"
+                                                onValueChange={onValueChange}
+                                                InputProps={{
+                                                    endAdornment: "DAI",
+                                                }}
+                                            ></TokenAmountTextField>
                                         </Box>
                                     </Box>
                                 </SectionWithHeading>
