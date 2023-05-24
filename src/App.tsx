@@ -1,11 +1,4 @@
-import {
-    Box,
-    CssBaseline,
-    ThemeProvider,
-    Typography,
-    createTheme,
-} from "@mui/material";
-import TopBar from "./global/TopBar";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { WagmiConfig, createClient, goerli, mainnet } from "wagmi";
 import { ConnectKitProvider, getDefaultClient } from "connectkit";
 import {
@@ -13,10 +6,7 @@ import {
     darkThemePaletteOptions,
     fontThemeOptions,
 } from "./theme";
-import MainGrid from "./components/MainGrid";
-import SectionWithHeading from "./components/sections/SectionWithHeading";
-import TokenAmountTextField from "./components/inputs/TokenAmountTextField";
-import { useState } from "react";
+import Demo from "./demo/Demo";
 
 const APP_NAME = "DAPP TEMPLATE";
 
@@ -49,47 +39,12 @@ function App() {
         })
     );
 
-    const [parsedValue, setParsedValue] = useState<string | null>(null);
-
-    function onValueChange(value: string | null) {
-        setParsedValue(value);
-    }
-
     return (
         <WagmiConfig client={client}>
             <ThemeProvider theme={theme}>
                 <ConnectKitProvider customTheme={connectkitTheme}>
                     <CssBaseline />
-                    <div className="app">
-                        <main className="content">
-                            <TopBar></TopBar>
-                            <MainGrid>
-                                <SectionWithHeading heading="Test">
-                                    <Box p={1}>
-                                        <Box mb={"1rem"}>
-                                            This is a Section component with a
-                                            heading.
-                                        </Box>
-                                        <Box>
-                                            <Typography variant="h6">
-                                                Parsed Value: {parsedValue}
-                                            </Typography>
-                                            <TokenAmountTextField
-                                                variant="outlined"
-                                                value="0.0"
-                                                tokenDecimals={18}
-                                                tokenSymbol="DAI"
-                                                onValueChange={onValueChange}
-                                                InputProps={{
-                                                    endAdornment: "DAI",
-                                                }}
-                                            ></TokenAmountTextField>
-                                        </Box>
-                                    </Box>
-                                </SectionWithHeading>
-                            </MainGrid>
-                        </main>
-                    </div>
+                    <Demo />
                 </ConnectKitProvider>
             </ThemeProvider>
         </WagmiConfig>

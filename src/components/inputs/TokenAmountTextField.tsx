@@ -1,29 +1,28 @@
-import NumberTextField, {
+import {
+    NumberTextFieldFormatter,
     NumberTextFieldParser,
     NumberTextFieldParserResult,
-    NumberTextFieldProps,
 } from "./NumberTextField";
 import { BigNumber } from "ethers";
 import { BN_1E, BN_UINT_MAX, BN_ZERO } from "../../lib/constants";
+import {
+    Button,
+    InputAdornment,
+    TextField,
+    TextFieldProps,
+} from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 
-export type TokenAmountParserOptions = {
-    tokenDecimals?: number;
-    allowNegative?: boolean;
-    allowZero?: boolean;
-};
-
-const tokenAmountDefaultParserOptions: TokenAmountParserOptions = {
-    tokenDecimals: 18,
-    allowNegative: false,
-    allowZero: false,
-};
+const defaultTokenDecimals = 18;
+const defaultAllowNegative = false;
+const defaultAllowZero = false;
 
 export function tokenAmountParser(
-    parserOpts?: TokenAmountParserOptions
+    tokenDecimals: number,
+    allowNegative: boolean,
+    allowZero: boolean,
+    maxValue?: string
 ): NumberTextFieldParser {
-    const options = parserOpts || tokenAmountDefaultParserOptions;
-    options.tokenDecimals = options.tokenDecimals || 18;
-    const { tokenDecimals, allowNegative, allowZero } = options;
     return (value: string): NumberTextFieldParserResult => {
         const [left, right] = value.split(".");
         let bnLeft: BigNumber, bnRight: BigNumber;
@@ -50,28 +49,113 @@ export function tokenAmountParser(
         const parsedValue = bnLeft.mul(BN_1E(tokenDecimals)).add(bnRight);
         if (parsedValue.gt(BN_UINT_MAX))
             return { parsedValue: null, errorText: "Amount too large" };
+        if (maxValue && parsedValue.gt(BigNumber.from(maxValue)))
+            return { parsedValue: null, errorText: "Amount above maximum" };
         return { parsedValue: parsedValue.toString(), errorText: undefined };
     };
 }
 
-export type TokenAmountTextFieldProps = Omit<
-    NumberTextFieldProps,
-    "parseNumber"
-> & {
-    tokenDecimals: number;
-    tokenSymbol: string;
-    parserOpts?: TokenAmountParserOptions;
+export function tokenAmountFormatter(
+    tokenDecimals: number
+): NumberTextFieldFormatter {
+    return (value: string | null) => {
+        if (!value || value.length === 0) return "0";
+        const parsedValue = BigNumber.from(value);
+        if (parsedValue.isZero()) return "0";
+        const left = parsedValue.div(BN_1E(tokenDecimals)).toString();
+        const right = parsedValue
+            .mod(BN_1E(tokenDecimals))
+            .add(BN_1E(tokenDecimals))
+            .toString()
+            .substring(1)
+            .replace(/0+$/, "");
+        return right.length === 0 ? left : `${left}.${right}`;
+    };
+}
+
+export type TokenAmountTextFieldProps = TextFieldProps & {
+    onValueChange?: (value: string | null) => void;
+    displayDecimals?: number;
+    tokenDecimals?: number;
+    tokenSymbol?: string;
+    allowNegative?: boolean;
+    allowZero?: boolean;
+    maxValue?: string;
 };
 
 function TokenAmountTextField(props: TokenAmountTextFieldProps) {
-    const numberTextFieldProps = props as NumberTextFieldProps;
-    const parse = tokenAmountParser(props.parserOpts);
+    const textFieldProps = props as TextFieldProps;
+    const tokenDecimals = props.tokenDecimals || defaultTokenDecimals;
+    const allowNegative = props.allowNegative || defaultAllowNegative;
+    const allowZero = props.allowZero || defaultAllowZero;
+    const maxValue = props.maxValue;
+
+    const parse = useMemo(
+        () =>
+            tokenAmountParser(
+                tokenDecimals,
+                allowNegative,
+                allowZero,
+                maxValue
+            ),
+        [tokenDecimals, allowNegative, allowZero, maxValue]
+    );
+
+    const format = useMemo(
+        () => tokenAmountFormatter(tokenDecimals),
+        [tokenDecimals]
+    );
+    const defaultValue = format(textFieldProps.defaultValue?.toString() || "0");
+
+    const [value, setValue] = useState<string>(defaultValue);
+    const [error, setError] = useState<string | undefined>();
+
+    useEffect(() => {
+        const { parsedValue, errorText } = parse(value);
+        setError(errorText);
+        props.onValueChange?.(parsedValue);
+    }, [value, parse, props]);
+
+    function onChange(event: React.ChangeEvent<HTMLInputElement>) {
+        setValue(event.target.value);
+    }
+
+    function onMaxButtonClick() {
+        if (!maxValue) return;
+        setValue(format(maxValue));
+        props.onValueChange?.(maxValue);
+    }
 
     return (
-        <NumberTextField
-            {...numberTextFieldProps}
-            parseNumber={parse}
-        ></NumberTextField>
+        <TextField
+            {...textFieldProps}
+            value={value}
+            onChange={onChange}
+            error={error ? true : false}
+            helperText={error || ""}
+            label={textFieldProps.label}
+            InputProps={{
+                endAdornment: (
+                    <InputAdornment position="end">
+                        <>
+                            {maxValue && (
+                                <Button
+                                    variant="text"
+                                    size="small"
+                                    disableRipple
+                                    disabled={!!props.disabled}
+                                    onClick={onMaxButtonClick}
+                                >
+                                    Max
+                                </Button>
+                            )}
+                            {props.tokenSymbol}
+                        </>
+                    </InputAdornment>
+                ),
+            }}
+            {...textFieldProps}
+        ></TextField>
     );
 }
 

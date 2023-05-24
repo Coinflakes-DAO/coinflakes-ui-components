@@ -1,4 +1,4 @@
-import { Box, Paper, useTheme } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import React from "react";
 
 export type SectionProps = React.PropsWithChildren<{}>;
