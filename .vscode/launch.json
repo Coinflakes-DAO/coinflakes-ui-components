@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "dapp-template: debug client",
+      "name": "coinflakes-ui-components: debug client",
       "type": "chrome",
       "request": "launch",
       "userDataDir": false,

@@ -5,8 +5,8 @@
 			"type": "npm",
 			"script": "start",
 			"problemMatcher": [],
-			"label": "dapp-template: npm start",
-			"detail": "Start webserver for dApp template"
+			"label": "coinflakes-ui-components: npm start",
+			"detail": "Start webserver for Coinflakes UI Components Demo App"
 		}
 	]
 }
