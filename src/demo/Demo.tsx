@@ -1,5 +1,6 @@
-import TopBar from "../global/TopBar";
+import { Box, Grid, Link } from "@mui/material";
 import MainGrid from "../components/MainGrid";
+import TopBar from "../global/TopBar";
 import TokenAmountTextFieldDemo from "./TokenAmountTextFieldDemo";
 
 function Demo() {
@@ -8,7 +9,18 @@ function Demo() {
             <main className="content">
                 <TopBar></TopBar>
                 <MainGrid>
-                    <TokenAmountTextFieldDemo />
+                    <Grid container>
+                        <Grid item xs={12}>
+                            <Box p={"1rem"}>
+                                <Link variant={"h5"} href="">
+                                    Token Amount Input Field
+                                </Link>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TokenAmountTextFieldDemo />
+                        </Grid>
+                    </Grid>
                 </MainGrid>
             </main>
         </div>

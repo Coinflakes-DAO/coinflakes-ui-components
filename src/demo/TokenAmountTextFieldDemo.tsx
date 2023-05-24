@@ -1,6 +1,3 @@
-import { useState } from "react";
-import TokenAmountTextField from "../components/inputs/TokenAmountTextField";
-import SectionWithHeading from "../components/sections/SectionWithHeading";
 import {
     Box,
     Checkbox,
@@ -10,6 +7,9 @@ import {
     Slider,
     TextField,
 } from "@mui/material";
+import { useState } from "react";
+import TokenAmountTextField from "../components/inputs/TokenAmountTextField";
+import SectionWithHeading from "../components/sections/SectionWithHeading";
 import { BN_1E } from "../lib/constants";
 
 function TokenAmountTextFieldDemo(props: any) {
@@ -123,14 +123,16 @@ function TokenAmountTextFieldDemo(props: any) {
 
                 <Box p={"1rem"}>
                     <TokenAmountTextField
-                        variant="outlined"
-                        defaultValue={BN_1E(18).mul("1000").toString()}
+                        initialValue={BN_1E(18).mul(1000).toString()}
                         tokenDecimals={tokenDecimals}
                         tokenSymbol={tokenSymbol}
                         onValueChange={onValueChange}
                         maxValue={maxValue}
                         allowNegative={allowNegative}
                         allowZero={allowZero}
+                        textFieldProps={{
+                            variant: "outlined",
+                        }}
                     ></TokenAmountTextField>
                 </Box>
             </Box>

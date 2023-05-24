@@ -1,17 +1,17 @@
 import {
-    NumberTextFieldFormatter,
-    NumberTextFieldParser,
-    NumberTextFieldParserResult,
-} from "./NumberTextField";
-import { BigNumber } from "ethers";
-import { BN_1E, BN_UINT_MAX, BN_ZERO } from "../../lib/constants";
-import {
     Button,
     InputAdornment,
     TextField,
     TextFieldProps,
 } from "@mui/material";
+import { BigNumber } from "ethers";
 import { useEffect, useMemo, useState } from "react";
+import { BN_1E, BN_UINT_MAX, BN_ZERO } from "../../lib/constants";
+import {
+    NumberTextFieldFormatter,
+    NumberTextFieldParser,
+    NumberTextFieldParserResult,
+} from "./NumberTextField";
 
 const defaultTokenDecimals = 18;
 const defaultAllowNegative = false;
@@ -73,7 +73,8 @@ export function tokenAmountFormatter(
     };
 }
 
-export type TokenAmountTextFieldProps = TextFieldProps & {
+export type TokenAmountTextFieldProps = {
+    initialValue?: string;
     onValueChange?: (value: string | null) => void;
     displayDecimals?: number;
     tokenDecimals?: number;
@@ -81,10 +82,11 @@ export type TokenAmountTextFieldProps = TextFieldProps & {
     allowNegative?: boolean;
     allowZero?: boolean;
     maxValue?: string;
+    textFieldProps?: TextFieldProps;
 };
 
 function TokenAmountTextField(props: TokenAmountTextFieldProps) {
-    const textFieldProps = props as TextFieldProps;
+    const textFieldProps = props.textFieldProps || {};
     const tokenDecimals = props.tokenDecimals || defaultTokenDecimals;
     const allowNegative = props.allowNegative || defaultAllowNegative;
     const allowZero = props.allowZero || defaultAllowZero;
@@ -105,9 +107,10 @@ function TokenAmountTextField(props: TokenAmountTextFieldProps) {
         () => tokenAmountFormatter(tokenDecimals),
         [tokenDecimals]
     );
-    const defaultValue = format(textFieldProps.defaultValue?.toString() || "0");
 
-    const [value, setValue] = useState<string>(defaultValue);
+    const [value, setValue] = useState<string>(
+        format(props.initialValue || "0")
+    );
     const [error, setError] = useState<string | undefined>();
 
     useEffect(() => {
@@ -143,7 +146,7 @@ function TokenAmountTextField(props: TokenAmountTextFieldProps) {
                                     variant="text"
                                     size="small"
                                     disableRipple
-                                    disabled={!!props.disabled}
+                                    disabled={!!textFieldProps.disabled}
                                     onClick={onMaxButtonClick}
                                 >
                                     Max
