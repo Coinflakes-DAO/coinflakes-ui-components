@@ -3,6 +3,15 @@ import MainGrid from "../components/MainGrid";
 import TopBar from "../global/TopBar";
 import TokenAmountTextFieldDemo from "./TokenAmountTextFieldDemo";
 
+import { RouterProvider, createHashRouter } from "react-router-dom";
+
+const demoRouter = createHashRouter([
+    {
+        path: "/",
+        Component: TokenAmountTextFieldDemo,
+    },
+]);
+
 function Demo() {
     return (
         <div className="app">
@@ -12,13 +21,20 @@ function Demo() {
                     <Grid container>
                         <Grid item xs={12}>
                             <Box p={"1rem"}>
-                                <Link variant={"h5"} href="">
+                                <Link variant={"h5"} href="/">
                                     Token Amount Input Field
+                                </Link>{" "}
+                                |{" "}
+                                <Link
+                                    variant={"h5"}
+                                    href="/#token-approval-button"
+                                >
+                                    Token Approval Button
                                 </Link>
                             </Box>
                         </Grid>
                         <Grid item xs={12}>
-                            <TokenAmountTextFieldDemo />
+                            <RouterProvider router={demoRouter} />;
                         </Grid>
                     </Grid>
                 </MainGrid>
